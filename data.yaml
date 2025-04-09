@@ -1,0 +1,6 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 6
+names: ['Not Wearing Helmet', 'Triple Riding', 'Usage Of Phone While Riding', 'Wheeling', 'Pothole']
