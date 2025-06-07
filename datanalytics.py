@@ -2,35 +2,37 @@ from glob import glob
 from itertools import chain
 from collections import Counter
 from pprint import pprint
+from model_data import id2class_map
+import os
 
-id2class_map = {
-    '0': 'No Parking',
-    '1': 'Not Wearing Helmet',
-    '2': 'Triple Riding',
-    '3': 'Usage Of Phone While Riding',
-    '4': 'Wheeling',
-    '5': 'Pothole'
-}
-
-main_path = '.' 
+main_path = '.'  
 print(main_path)
 
+def get_folder_size_kb(path):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            if os.path.isfile(fp):
+                total_size += os.path.getsize(fp)
+    return total_size // 1024  
+
 def print_data_size(folder_type):
-    data_size = len(glob(f'{main_path}/{folder_type}/labels/*.txt')) # all .txt files from labels folder of train or test folder
-    print(f'{folder_type} data count: {data_size}')
+    data_size = len(glob(f'{main_path}/{folder_type}/labels/*.txt'))
+    folder_size_kb = get_folder_size_kb(os.path.join(main_path, folder_type))
+    print(f'{folder_type} data count: {data_size} | Total size: {folder_size_kb} KB')
 
 def print_class_count(folder_type):
     class_list = []
-    for file in glob(f'{main_path}/{folder_type}/labels/*.txt'): # for each file 
-        class_list.append([row.split()[0] for row in open(file, "r")]) # for each line extract 1st element (label)
+    for file in glob(f'{main_path}/{folder_type}/labels/*.txt'):
+        class_list.append([row.split()[0] for row in open(file, "r")])
     counter = Counter(list(chain(*class_list)))
-    print(f'-- data class count')
-    pprint({f'{k}. {id2class_map[k]}':v for k, v in counter.items()}) # how many of each class with correct label from id2class map
+    print(f'-- class-wise data count:')
+    pprint({f'{k}. {id2class_map[k]}': v for k, v in counter.items()})
     print()
 
-print_data_size('train')
-print_class_count('train')
-print_data_size('valid')
-print_class_count('valid')
-print_data_size('test')
-print_class_count('test')
+
+# Usage for your folders
+for folder in ['violations']:
+    print_data_size(folder)
+    print_class_count(folder)

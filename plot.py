@@ -1,26 +1,9 @@
 import os
 import cv2
 from matplotlib import pyplot as plt
+from model_data import id2class_map, class2color_map
 
-main_path = '.' 
-
-id2class_map = {
-    '0': 'No Parking',
-    '1': 'Not Wearing Helmet',
-    '2': 'Triple Riding',
-    '3': 'Usage Of Phone While Riding',
-    '4': 'Wheeling',
-    '5': 'Pothole'
-}
-
-class2color_map = {
-    'No Parking': (255, 0, 0),
-    'Not Wearing Helmet': (0, 255, 0),
-    'Triple Riding': (0, 0, 255),
-    'Usage Of Phone While Riding': (255, 255, 0),
-    'Wheeling': (0, 255, 255),
-    'Pothole': (255, 0, 255)
-}
+main_path = './vehicle_big' 
 
 def get_bbox_and_label(image_name, data_type='train', main_path=main_path):
     lbl_path = os.path.join(main_path, data_type, 'labels', f'{image_name}.txt')
@@ -108,5 +91,12 @@ def plot_image(image_name, data_type='train', use_obb=True, class2color_map=clas
     plt.axis('off')
     plt.show()
 
+# plot_image(image_name='65', data_type="train", use_obb=False) 
 
-plot_image(image_name='2cdray3_jpg.rf.5affca7f694dc43655679b0244441a2f', data_type="train", use_obb=False)
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1:
+        image_name = sys.argv[1]
+        plot_image(image_name=image_name, data_type='train', use_obb=False)
+    else:
+        print("Please provide an image name as a command line argument.")
